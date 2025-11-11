@@ -1,0 +1,42 @@
+name: PokemonPlugin
+version: 1.0.0
+main: com.icetea520.pokemon.PokemonPlugin
+api-version: 1.21
+author: IceTea_520
+description: Minecraft 寶可夢插件
+
+commands:
+  e:
+    description: 寶可夢插件主指令 (簡短版)
+    usage: /e <子指令>
+    aliases: [pokemon, pk]
+  sc:
+    description: 寶可夢插件主指令 (簡短版)
+    usage: /sc <子指令>
+    aliases: [pokemon, pk]
+
+permissions:
+  pokemon.*:
+    description: 允許使用所有寶可夢功能
+    default: true
+  pokemon.mode:
+    description: 允許切換模式
+    default: true
+  pokemon.bag:
+    description: 允許使用捕捉背包
+    default: true
+  pokemon.catch:
+    description: 允許使用捕捉球
+    default: true
+  pokemon.level:
+    description: 允許查看等級資訊
+    default: true
+  pokemon.supply:
+    description: 允許管理物資補給 (僅 OP)
+    default: op
+  pokemon.admin:
+    description: 允許管理員功能 (僅 OP)
+    default: op
+  pokemon.get:
+    description: 允許獲取物品 (僅 OP)
+    default: op

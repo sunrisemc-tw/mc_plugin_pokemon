@@ -1,0 +1,119 @@
+# Minecraft 寶可夢插件配置文件
+# 開發者: IceTea_520
+
+# 插件基本設定
+settings:
+  # 是否啟用除錯模式
+  debug: false
+  # 預設語言
+  language: "zh_TW"
+  # 是否啟用自動更新檢查
+  check-updates: true
+
+# 捕捉背包設定
+catch-bag:
+  # 預設背包容量
+  default-size: 100
+  # 是否允許擴展背包
+  allow-expansion: true
+  # 最大背包容量
+  max-size: 1000
+
+# 捕捉球設定
+pokeball:
+  # 捕捉成功率 (0.0 - 1.0)
+  catch-rate: 0.8
+  # 是否消耗捕捉球
+  consume-on-use: true
+  # 捕捉球材料
+  material: "EGG"
+  # 捕捉球顯示名稱
+  display-name: "§c§l捕捉球"
+  # 捕捉球描述
+  lore:
+    - "§7右鍵點擊生物來捕捉"
+    - "§7捕捉成功後會存入背包"
+    - "§e§l寶可夢插件"
+
+# 等級系統設定
+level-system:
+  # 最大等級
+  max-level: 100
+  # 是否啟用升級特效
+  enable-level-up-effects: true
+  # 是否啟用等級獎勵
+  enable-level-rewards: true
+  # 等級獎勵設定
+  level-rewards:
+    10:
+      name: "高級捕捉球"
+      description: "解鎖高級捕捉球"
+    25:
+      name: "超級捕捉球"
+      description: "解鎖超級捕捉球"
+    50:
+      name: "大師捕捉球"
+      description: "解鎖大師捕捉球"
+    75:
+      name: "傳說捕捉球"
+      description: "解鎖傳說捕捉球"
+    100:
+      name: "所有功能"
+      description: "解鎖所有功能"
+
+# 物資補給設定
+supply-system:
+  # 預設生成間隔 (秒)
+  default-interval: 30
+  # 最小生成間隔 (秒)
+  min-interval: 5
+  # 最大生成間隔 (秒)
+  max-interval: 3600
+  # 是否啟用物資生成
+  enable-supply: true
+  # 物資生成範圍 (格)
+  supply-range: 50
+  # 物資物品設定
+  supply-items:
+    - type: "pokeball"
+      amount: 1
+      weight: 100
+  # 是否顯示生成訊息
+  show-messages: true
+  # 是否啟用物資名稱顯示
+  show-item-names: true
+
+# 權限設定
+permissions:
+  # 特殊玩家權限
+  special-players:
+    - "IceTea_520"
+  # 管理員權限
+  admin-permissions:
+    - "pokemon.*"
+    - "pokemon.get"
+
+# 訊息設定
+messages:
+  prefix: "§6[寶可夢] "
+  success: "§a"
+  error: "§c"
+  info: "§e"
+  help: "§7"
+
+# 資料儲存設定
+storage:
+  # 儲存類型: "file" (目前僅支援檔案儲存)
+  type: "file"
+  # 檔案儲存路徑
+  file-path: "plugins/PokemonPlugin/data/"
+  # 自動儲存間隔 (分鐘) - 目前為即時儲存
+  auto-save-interval: 0
+  # 是否啟用即時儲存
+  enable-instant-save: true
+  # 資料檔案設定
+  data-files:
+    # 玩家資料檔案
+    players: "players.yml"
+    # 物資生成點檔案
+    supply-points: "supply_points.yml"

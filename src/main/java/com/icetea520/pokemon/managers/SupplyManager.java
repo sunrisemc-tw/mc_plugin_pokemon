@@ -161,9 +161,12 @@ public class SupplyManager {
         
         // 發送訊息給附近玩家
         for (Player player : world.getNearbyPlayers(location, 50)) {
-            player.sendMessage("§6§l[物資補給] §e在 " +
-                location.getBlockX() + ", " + location.getBlockY() + ", " + location.getBlockZ() +
-                " 生成了物資！");
+            player.getScheduler().run(plugin, scheduledTask ->
+                player.sendMessage("§6§l[物資補給] §e在 " +
+                    location.getBlockX() + ", " + location.getBlockY() + ", " + location.getBlockZ() +
+                    " 生成了物資！"),
+                () -> {}
+            );
         }
     }
     

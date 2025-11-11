@@ -3,9 +3,9 @@ package com.icetea520.pokemon.managers;
 import com.icetea520.pokemon.PokemonPlugin;
 import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -155,17 +155,15 @@ public class SupplyManager {
         if (droppedItem != null) {
             // 設置物品不會消失
             droppedItem.setUnlimitedLifetime(true);
-            droppedItem.setCustomName("§6§l物資補給");
+            droppedItem.customName(Component.text("§6§l物資補給"));
             droppedItem.setCustomNameVisible(true);
         }
         
         // 發送訊息給附近玩家
         for (Player player : world.getNearbyPlayers(location, 50)) {
-            plugin.getServer().getRegionScheduler().run(plugin, player, scheduledTask ->
-                player.sendMessage("§6§l[物資補給] §e在 " +
-                    location.getBlockX() + ", " + location.getBlockY() + ", " + location.getBlockZ() +
-                    " 生成了物資！")
-            );
+            player.sendMessage("§6§l[物資補給] §e在 " +
+                location.getBlockX() + ", " + location.getBlockY() + ", " + location.getBlockZ() +
+                " 生成了物資！");
         }
     }
     

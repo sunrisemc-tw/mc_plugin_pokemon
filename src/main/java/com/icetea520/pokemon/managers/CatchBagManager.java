@@ -21,6 +21,10 @@ public class CatchBagManager {
     }
     
     public boolean addPokemon(Player player, Entity entity) {
+        return addPokemon(player, entity.getType().name(), entity.getName());
+    }
+
+    public boolean addPokemon(Player player, String entityType, String entityName) {
         UUID playerId = player.getUniqueId();
         List<CaughtPokemon> bag = playerBags.getOrDefault(playerId, new ArrayList<>());
         
@@ -29,8 +33,8 @@ public class CatchBagManager {
         }
         
         CaughtPokemon pokemon = new CaughtPokemon(
-            entity.getType().name(),
-            entity.getName(),
+            entityType,
+            entityName,
             System.currentTimeMillis()
         );
         

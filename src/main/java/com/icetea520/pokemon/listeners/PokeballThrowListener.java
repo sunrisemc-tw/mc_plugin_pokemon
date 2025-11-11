@@ -97,31 +97,52 @@ public class PokeballThrowListener implements Listener {
     }
     
     private void handleCatch(Player player, Entity entity) {
-        // 檢查是否為可捕捉的生物
+        String entityType = entity.getType().name();
+        String entityName = entity.getName();
+        if (entityName == null || entityName.isBlank()) {
+            entityName = entityType;
+        }
+        final String finalEntityName = entityName;
+        final String finalEntityType = entityType;
+        
         if (!isCatchableEntity(entity)) {
-            player.sendMessage("§c此生物無法捕捉！");
-            returnPokeball(player);
+            player.getScheduler().run(plugin, scheduledTask -> {
+                player.sendMessage("§c此生物無法捕捉！");
+                returnPokeballInternal(player);
+            }, () -> {});
             return;
         }
         
-        // 檢查捕捉是否成功
-        if (pokeballManager.isCatchSuccessful()) {
-            // 捕捉成功
-            if (catchBagManager.addPokemon(player, entity)) {
-                player.sendMessage("§a成功捕捉到 " + entity.getName() + "！");
-                entity.remove();
-            } else {
-                player.sendMessage("§c捕捉失敗！背包可能已滿。");
-                returnPokeball(player);
-            }
+        boolean catchSuccessful = pokeballManager.isCatchSuccessful();
+        
+        if (catchSuccessful) {
+            player.getScheduler().run(plugin, scheduledTask -> {
+                boolean added = catchBagManager.addPokemon(player, finalEntityType, finalEntityName);
+                if (added) {
+                    player.sendMessage("§a成功捕捉到 " + finalEntityName + "！");
+                    entity.getScheduler().run(plugin, entityTask -> {
+                        if (entity.isValid()) {
+                            entity.remove();
+                        }
+                    }, () -> {});
+                } else {
+                    player.sendMessage("§c捕捉失敗！背包可能已滿。");
+                    returnPokeballInternal(player);
+                }
+            }, () -> {});
         } else {
-            // 捕捉失敗
-            player.sendMessage("§c捕捉失敗！" + entity.getName() + " 逃脫了！");
-            returnPokeball(player);
+            player.getScheduler().run(plugin, scheduledTask -> {
+                player.sendMessage("§c捕捉失敗！" + finalEntityName + " 逃脫了！");
+                returnPokeballInternal(player);
+            }, () -> {});
         }
     }
     
     private void returnPokeball(Player player) {
+        player.getScheduler().run(plugin, scheduledTask -> returnPokeballInternal(player), () -> {});
+    }
+    
+    private void returnPokeballInternal(Player player) {
         ItemStack pokeball = pokeballManager.createPokeball(1);
         player.getInventory().addItem(pokeball);
         player.sendMessage("§e捕捉球已返回！");

@@ -41,66 +41,68 @@ public class PokemonCommand implements CommandExecutor {
         
         Player player = (Player) sender;
         
-        if (args.length == 0) {
-            sendHelpMessage(player);
-            return true;
-        }
-        
-        String subCommand = args[0].toLowerCase();
-        
-        switch (subCommand) {
-            case "mode":
-                if (!player.hasPermission("pokemon.mode")) {
-                    player.sendMessage("§c您沒有權限使用此功能！");
-                    return true;
-                }
-                modeModule.execute(player, args);
-                break;
-                
-            case "bag":
-                if (!player.hasPermission("pokemon.bag")) {
-                    player.sendMessage("§c您沒有權限使用此功能！");
-                    return true;
-                }
-                bagModule.execute(player, args);
-                break;
-                
-            case "catch":
-                if (!player.hasPermission("pokemon.catch")) {
-                    player.sendMessage("§c您沒有權限使用此功能！");
-                    return true;
-                }
-                pokeballModule.execute(player, args);
-                break;
-                
-            case "get":
-                if (!player.hasPermission("pokemon.get")) {
-                    player.sendMessage("§c您沒有權限使用此功能！");
-                    return true;
-                }
-                itemGetModule.execute(player, args);
-                break;
-                
-            case "level":
-                if (!player.hasPermission("pokemon.level")) {
-                    player.sendMessage("§c您沒有權限使用此功能！");
-                    return true;
-                }
-                levelModule.execute(player, args);
-                break;
-                
-            case "supply":
-                if (!player.hasPermission("pokemon.supply")) {
-                    player.sendMessage("§c您沒有權限使用此功能！");
-                    return true;
-                }
-                supplyModule.execute(player, args);
-                break;
-                
-            default:
+        player.getScheduler().run(plugin, scheduledTask -> {
+            if (args.length == 0) {
                 sendHelpMessage(player);
-                break;
-        }
+                return;
+            }
+            
+            String subCommand = args[0].toLowerCase();
+            
+            switch (subCommand) {
+                case "mode":
+                    if (!player.hasPermission("pokemon.mode")) {
+                        player.sendMessage("§c您沒有權限使用此功能！");
+                        return;
+                    }
+                    modeModule.execute(player, args);
+                    break;
+                    
+                case "bag":
+                    if (!player.hasPermission("pokemon.bag")) {
+                        player.sendMessage("§c您沒有權限使用此功能！");
+                        return;
+                    }
+                    bagModule.execute(player, args);
+                    break;
+                    
+                case "catch":
+                    if (!player.hasPermission("pokemon.catch")) {
+                        player.sendMessage("§c您沒有權限使用此功能！");
+                        return;
+                    }
+                    pokeballModule.execute(player, args);
+                    break;
+                    
+                case "get":
+                    if (!player.hasPermission("pokemon.get")) {
+                        player.sendMessage("§c您沒有權限使用此功能！");
+                        return;
+                    }
+                    itemGetModule.execute(player, args);
+                    break;
+                    
+                case "level":
+                    if (!player.hasPermission("pokemon.level")) {
+                        player.sendMessage("§c您沒有權限使用此功能！");
+                        return;
+                    }
+                    levelModule.execute(player, args);
+                    break;
+                    
+                case "supply":
+                    if (!player.hasPermission("pokemon.supply")) {
+                        player.sendMessage("§c您沒有權限使用此功能！");
+                        return;
+                    }
+                    supplyModule.execute(player, args);
+                    break;
+                    
+                default:
+                    sendHelpMessage(player);
+                    break;
+            }
+        }, () -> {});
         
         return true;
     }

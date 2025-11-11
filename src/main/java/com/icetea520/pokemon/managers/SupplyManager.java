@@ -1,24 +1,24 @@
 package com.icetea520.pokemon.managers;
 
 import com.icetea520.pokemon.PokemonPlugin;
+import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class SupplyManager {
     
     private final PokemonPlugin plugin;
     private final Map<String, SupplyPoint> supplyPoints; // 物資生成點
-    private final Map<String, BukkitTask> supplyTasks; // 定時任務
+    private final Map<String, ScheduledTask> supplyTasks; // 定時任務
     
     public SupplyManager(PokemonPlugin plugin) {
         this.plugin = plugin;
@@ -108,21 +108,28 @@ public class SupplyManager {
     private void startSupplyTask(SupplyPoint supplyPoint) {
         String key = locationToString(supplyPoint.getLocation());
         
-        BukkitTask task = new BukkitRunnable() {
-            @Override
-            public void run() {
-                generateSupply(supplyPoint);
-            }
-        }.runTaskTimer(plugin, 0L, supplyPoint.getIntervalSeconds() * 20L); // 轉換為 ticks
+        RegionScheduler scheduler = plugin.getServer().getRegionScheduler();
+        long intervalTicks = supplyPoint.getIntervalSeconds() * 20L;
         
-        supplyTasks.put(key, task);
+        ScheduledTask repeatingTask = scheduler.runAtFixedRate(
+            plugin,
+            supplyPoint.getLocation(),
+            scheduledTask -> generateSupply(supplyPoint),
+            1L,
+            intervalTicks
+        );
+        
+        supplyTasks.put(key, repeatingTask);
+        
+        // 立即執行一次以保持原有行為
+        scheduler.run(plugin, supplyPoint.getLocation(), scheduledTask -> generateSupply(supplyPoint));
     }
     
     /**
      * 停止物資生成任務
      */
     private void stopSupplyTask(String key) {
-        BukkitTask task = supplyTasks.get(key);
+        ScheduledTask task = supplyTasks.get(key);
         if (task != null) {
             task.cancel();
             supplyTasks.remove(key);
@@ -153,13 +160,13 @@ public class SupplyManager {
         }
         
         // 發送訊息給附近玩家
-        world.getPlayers().stream()
-            .filter(player -> player.getLocation().distance(location) <= 50)
-            .forEach(player -> {
-                player.sendMessage("§6§l[物資補給] §e在 " + 
-                    location.getBlockX() + ", " + location.getBlockY() + ", " + location.getBlockZ() + 
-                    " 生成了物資！");
-            });
+        for (Player player : world.getNearbyPlayers(location, 50)) {
+            plugin.getServer().getRegionScheduler().run(plugin, player, scheduledTask ->
+                player.sendMessage("§6§l[物資補給] §e在 " +
+                    location.getBlockX() + ", " + location.getBlockY() + ", " + location.getBlockZ() +
+                    " 生成了物資！")
+            );
+        }
     }
     
     /**
@@ -222,7 +229,7 @@ public class SupplyManager {
      * 停止所有物資生成任務
      */
     public void stopAllTasks() {
-        for (BukkitTask task : supplyTasks.values()) {
+        for (ScheduledTask task : supplyTasks.values()) {
             task.cancel();
         }
         supplyTasks.clear();

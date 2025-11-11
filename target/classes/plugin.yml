@@ -1,7 +1,7 @@
 name: PokemonPlugin
 version: 1.0.0
 main: com.icetea520.pokemon.PokemonPlugin
-api-version: 1.21
+api-version: 1.20
 author: IceTea_520
 description: Minecraft 寶可夢插件
 
